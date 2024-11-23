@@ -1,8 +1,9 @@
 public class Runner {
-    private String name;
-    private int teamID;
-    private int BibNumber;
+    private final String name;
+    private final int teamID;
+    private final int BibNumber;
     private boolean isFinished;
+    private int placement;
 
     public Runner(String name, int teamID, int BibNumber) {
         this.name = name;
@@ -11,12 +12,17 @@ public class Runner {
         this.isFinished = false;
     }
 
-    public void finished() {
+    public void finished(int placement) {
         this.isFinished = true;
+        this.placement = placement;
     }
 
     public boolean isFinished() {
         return this.isFinished;
+    }
+
+    public int getPlacement() {
+        return this.placement;
     }
 
     public String getName() {
@@ -27,9 +33,13 @@ public class Runner {
         return this.BibNumber;
     }
 
+    public int getTeamID() {
+        return this.teamID;
+    }
+
     @Override
     public String toString() {
-        return name;
+        return this.name;
     }
 
 }
