@@ -1,14 +1,22 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Race {
-    // public ArrayList<Runner> runners = new ArrayList<>();
+    public static ArrayList<Runner> allRunners = new ArrayList<>();
+    
     public static void main(String[] args) {
         Team[] teams = createTeams();
-        Team CA = teams[0];
-        Team DA = teams[1];
         
-        finishRace(teams);
+        for (Team team : teams) {
+            allRunners.addAll(team.getRunners());
+        }
+
+        // finishRace(teams);
+
+        int[] placements = {1000, 2003, 1001, 2004, 1002};
+        calculateTeamPoints(placements, teams);
 
         // System.out.println(CA.getRunners());
         // System.out.println(DA.getRunners());
@@ -25,8 +33,7 @@ public class Race {
 
         // System.out.println(bibNumbers);
 
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        clearTerminal();
 
         for (int i = 0; i < Team.getTotalRunners(); i++) {
             
@@ -48,6 +55,33 @@ public class Race {
         }
         System.out.println(placements);
     }
+
+    public static void calculateTeamPoints(int[] placements, Team[] teams) {
+        clearTerminal();
+        for (Team team : teams) {
+            for (int place = 1; place <= placements.length; place++) {
+                int bibNumber = placements[place - 1];
+                if (team.getAllBibNumbers().contains(bibNumber)) {
+                    team.addPoints(place);
+                    team.getRunnerByID(bibNumber).finished(place);
+                }
+            }
+            System.out.println(team.getName() + " has " + team.getPoints() + " points");
+            System.out.println(team.getRunners());
+        }
+
+        System.out.println(allRunners);
+
+        Collections.sort(allRunners, new Comparator<Runner>() {
+            @Override
+            public int compare(Runner r1, Runner r2) {
+                return Integer.compare(r1.getPlacement(), r2.getPlacement());
+            }
+        });
+        
+        System.out.println(allRunners);
+
+    }
     
     public static Team[] createTeams() {
         String[] initials = {"AB", "CD", "EF", "GH", "IJ", "KL"};
@@ -65,5 +99,10 @@ public class Race {
         }
 
         return new Team[]{CA, DA};
+    }
+
+    public static void clearTerminal() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 }

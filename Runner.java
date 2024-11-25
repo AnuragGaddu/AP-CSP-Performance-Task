@@ -15,6 +15,7 @@ public class Runner {
     public void finished(int placement) {
         this.isFinished = true;
         this.placement = placement;
+        // System.out.println(this.name + " has finished in " + placement + "(th) place");
     }
 
     public boolean isFinished() {
@@ -39,7 +40,11 @@ public class Runner {
 
     @Override
     public String toString() {
-        return this.name;
+        if (this.isFinished) {
+            return this.name + " has finished in " + this.placement + "(th) place \n";
+        } else {
+            return this.name + " has not finished \n";
+        }
     }
 
 }

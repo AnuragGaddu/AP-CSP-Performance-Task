@@ -21,7 +21,7 @@ public class Team {
             this.points += placement;
             this.counter++;
         } else {
-            System.out.println("You can't add more than 6 placements");
+            System.out.println("You can't add more than 5 placements");
         }
     }
 
@@ -32,6 +32,15 @@ public class Team {
 
     public ArrayList<Runner> getRunners() {
         return this.runners;
+    }
+
+    public Runner getRunnerByID(int bibNumber) {
+        for (Runner runner : this.runners) {
+            if (runner.getBibNumber() == bibNumber) {
+                return runner;
+            }
+        }
+        return null;
     }
 
     public String getName() {
