@@ -10,6 +10,9 @@ public class Runner {
         this.teamID = teamID;
         this.BibNumber = BibNumber;
         this.isFinished = false;
+
+        // This feels wrong, fix if posssible
+        this.placement = Integer.MAX_VALUE;
     }
 
     public void finished(int placement) {
@@ -41,9 +44,9 @@ public class Runner {
     @Override
     public String toString() {
         if (this.isFinished) {
-            return this.name + " has finished in " + this.placement + "(th) place \n";
+            return "\n" + this.name + " has finished in " + this.placement + "(th) place";
         } else {
-            return this.name + " has not finished \n";
+            return "\n" + this.name + " has not finished";
         }
     }
 

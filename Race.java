@@ -4,25 +4,26 @@ import java.util.Comparator;
 import java.util.Scanner;
 
 public class Race {
-    public static ArrayList<Runner> allRunners = new ArrayList<>();
+    public static ArrayList<Runner> allRacers = new ArrayList<>();
     
     public static void main(String[] args) {
         Team[] teams = createTeams();
         
         for (Team team : teams) {
-            allRunners.addAll(team.getRunners());
+            allRacers.addAll(team.getRunners());
         }
 
-        // finishRace(teams);
+        
 
-        int[] placements = {1000, 2003, 1001, 2004, 1002};
+        ArrayList<Integer> placements = getPlacements(teams);
         calculateTeamPoints(placements, teams);
 
         // System.out.println(CA.getRunners());
         // System.out.println(DA.getRunners());
+
     }
 
-    public static void finishRace(Team teams[]) {
+    public static ArrayList<Integer> getPlacements(Team teams[]) {
         Scanner input = new Scanner(System.in);
         ArrayList<Integer> placements = new ArrayList<>();
         ArrayList<Integer> bibNumbers = new ArrayList<>();
@@ -31,55 +32,69 @@ public class Race {
             bibNumbers.addAll(team.getAllBibNumbers());
         }
 
-        // System.out.println(bibNumbers);
-
         clearTerminal();
 
-        for (int i = 0; i < Team.getTotalRunners(); i++) {
-            
+        try {
+            for (int i = 0; i < allRacers.size(); i++) {
+                System.out.print("Who came in " + (i + 1) + " place? (Bib Number) ");
+                String userIn = input.nextLine();
+                int bibNumber;
 
-            System.out.print("Who came in " + (i + 1) + " place? (Bib Number) ");
-            int bibNumber = input.nextInt();
-            if (placements.contains(bibNumber)) {
-                System.out.println("That runner has already finished");
-                i--;
-                continue;
-            } else if (!bibNumbers.contains(bibNumber)) {
-                System.out.println("That bib# is not a valid entry.");
-                System.out.println("Valid entries are: " + bibNumbers);
-                i--;
-                continue;
+                if (userIn.equals("exit")) {
+                    break;
+                }
+
+                try {
+                    bibNumber = Integer.parseInt(userIn);
+                } catch (NumberFormatException e) {
+                    System.out.println("Pass a valid Bib Number or type 'exit' to stop");
+                    i--;
+                    continue;
+                }
+
+                if (placements.contains(bibNumber)) {
+                    System.out.println("That runner has already finished");
+                    i--;
+                    continue;
+                } else if (!bibNumbers.contains(bibNumber)) {
+                    System.out.println("That bib# is not a valid entry.");
+                    System.out.println("Valid entries are: " + bibNumbers);
+                    i--;
+                    continue;
+                }
+                placements.add(bibNumber);
+                bibNumbers.remove(bibNumbers.indexOf(bibNumber)); 
             }
-            placements.add(bibNumber);
-            bibNumbers.remove(bibNumbers.indexOf(bibNumber)); 
+            return placements;
+
         }
-        System.out.println(placements);
+        finally {
+            input.close();
+        }
     }
 
-    public static void calculateTeamPoints(int[] placements, Team[] teams) {
+    public static void calculateTeamPoints(ArrayList<Integer> placements, Team[] teams) {
         clearTerminal();
         for (Team team : teams) {
-            for (int place = 1; place <= placements.length; place++) {
-                int bibNumber = placements[place - 1];
+            for (int place = 1; place <= placements.size(); place++) {
+                int bibNumber = placements.get(place - 1);
                 if (team.getAllBibNumbers().contains(bibNumber)) {
                     team.addPoints(place);
                     team.getRunnerByID(bibNumber).finished(place);
                 }
             }
             System.out.println(team.getName() + " has " + team.getPoints() + " points");
-            System.out.println(team.getRunners());
+            // System.out.println(team.getRunners());
         }
 
-        System.out.println(allRunners);
-
-        Collections.sort(allRunners, new Comparator<Runner>() {
+        Collections.sort(allRacers, new Comparator<Runner>() {
             @Override
             public int compare(Runner r1, Runner r2) {
                 return Integer.compare(r1.getPlacement(), r2.getPlacement());
             }
         });
-        
-        System.out.println(allRunners);
+
+        System.out.println(allRacers);
 
     }
     
