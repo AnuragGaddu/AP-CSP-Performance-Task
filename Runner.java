@@ -1,13 +1,13 @@
 public class Runner {
     private final String name;
-    private final int teamID;
+    private final String teamName;
     private final int BibNumber;
     private boolean isFinished;
     private int placement;
 
-    public Runner(String name, int teamID, int BibNumber) {
+    public Runner(String name, String teamName, int BibNumber) {
         this.name = name;
-        this.teamID = teamID;
+        this.teamName = teamName;
         this.BibNumber = BibNumber;
         this.isFinished = false;
 
@@ -37,8 +37,8 @@ public class Runner {
         return this.BibNumber;
     }
 
-    public int getTeamID() {
-        return this.teamID;
+    public String getTeamName() {
+        return this.teamName;
     }
 
     @Override

@@ -6,7 +6,7 @@ public class Team {
     private final int ID;
     private int points;
     private int counter;
-    private ArrayList<Runner> runners = new ArrayList<>();
+    private final ArrayList<Runner> runners = new ArrayList<>();
 
 
     public Team(String name, int teamID) {
@@ -65,5 +65,10 @@ public class Team {
 
     public static int getTotalRunners() {
         return totalRunners;
+    }
+
+    @Override
+    public String toString() {
+        return this.name + " with " + this.points + " points";
     }
 }

@@ -5,12 +5,12 @@ import java.util.Scanner;
 
 public class Race {
     public static ArrayList<Runner> allRacers = new ArrayList<>();
-    public static Team[] teams;
+    public static ArrayList<Team> allTeams = new ArrayList<>();
 
     public static void main(String[] args) {
-        teams = createTeams();
+        createTeams();
         
-        for (Team team : teams) {
+        for (Team team : allTeams) {
             allRacers.addAll(team.getRunners());
         }
 
@@ -18,10 +18,26 @@ public class Race {
 
         ArrayList<Integer> placements = getPlacements();
         placeTeams(placements);
+        anounceWinners();
 
-        // System.out.println(CA.getRunners());
-        // System.out.println(DA.getRunners());
+        
+    }
 
+    public static void anounceWinners() {
+        clearTerminal();
+        System.out.println("The top 5 athletes today were: ");
+        for (int i = 0; i < 5; i++) {
+            Runner runner = allRacers.get(i);
+            System.out.println((i + 1) + ". " + runner.getName() + " from " + runner.getTeamName());
+        }
+
+        System.out.println("\nThe top 3 teams today were: ");
+        int i = 0;
+        for (Team team : allTeams) {
+            System.out.println((i + 1) + ". " + team);
+            i++;
+            if (i == 3) {break;}
+        }
     }
 
     public static ArrayList<Integer> getPlacements() {
@@ -29,7 +45,7 @@ public class Race {
         ArrayList<Integer> placements = new ArrayList<>();
         ArrayList<Integer> validBibNumbers = new ArrayList<>();
 
-        for (Team team : teams) {
+        for (Team team : allTeams) {
             validBibNumbers.addAll(team.getAllBibNumbers());
         }
 
@@ -61,6 +77,7 @@ public class Race {
                     i--;
                     continue;
                 }
+                
                 placements.add(bibNumber);
                 validBibNumbers.remove(validBibNumbers.indexOf(bibNumber)); 
             }
@@ -74,7 +91,7 @@ public class Race {
 
     public static void placeTeams(ArrayList<Integer> placements) {
         clearTerminal();
-        for (Team team : teams) {
+        for (Team team : allTeams) {
             for (int place = 1; place <= placements.size(); place++) {
                 int bibNumber = placements.get(place - 1);
                 if (team.getAllBibNumbers().contains(bibNumber)) {
@@ -86,6 +103,13 @@ public class Race {
             // System.out.println(team.getRunners());
         }
 
+        Collections.sort(allTeams, new Comparator<Team>() {
+            @Override
+            public int compare(Team t1, Team t2) {
+                return Integer.compare(t1.getPoints(), t2.getPoints());
+            }
+        });
+
         Collections.sort(allRacers, new Comparator<Runner>() {
             @Override
             public int compare(Runner r1, Runner r2) {
@@ -93,26 +117,27 @@ public class Race {
             }
         });
 
-        System.out.println(allRacers);
+        // System.out.println(allTeams);
 
     }
     
-    public static Team[] createTeams() {
-        String[] initials = {"AB", "CD", "EF", "GH", "IJ", "KL"};
-                            //  "MN", "OP", "QR", "ST", "UV", "WX"};
+    public static void createTeams() {
+        String[] initials = {"AB", "CD", "EF", "GH", "IJ", "KL",
+                             "MN", "OP", "QR", "ST", "UV", "WX"};
         
         Team CA = new Team("CA", 1);
         Team DA = new Team("DA", 2);
 
         for (int i = 0; i < initials.length / 2; i++) {
-            CA.addRunner(new Runner(initials[i], 1, 1000 + i));
+            CA.addRunner(new Runner(initials[i], "Cary Academy", 1000 + i));
         }
 
         for (int i = initials.length / 2; i < initials.length; i++) {
-            DA.addRunner(new Runner(initials[i], 2, 2000 + i));
+            DA.addRunner(new Runner(initials[i], "Durham Academy", 2000 + i));
         }
 
-        return new Team[]{CA, DA};
+        allTeams.add(CA);
+        allTeams.add(DA);
     }
 
     public static void clearTerminal() {
