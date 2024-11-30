@@ -5,9 +5,10 @@ import java.util.Scanner;
 
 public class Race {
     public static ArrayList<Runner> allRacers = new ArrayList<>();
-    
+    public static Team[] teams;
+
     public static void main(String[] args) {
-        Team[] teams = createTeams();
+        teams = createTeams();
         
         for (Team team : teams) {
             allRacers.addAll(team.getRunners());
@@ -15,21 +16,21 @@ public class Race {
 
         
 
-        ArrayList<Integer> placements = getPlacements(teams);
-        calculateTeamPoints(placements, teams);
+        ArrayList<Integer> placements = getPlacements();
+        placeTeams(placements);
 
         // System.out.println(CA.getRunners());
         // System.out.println(DA.getRunners());
 
     }
 
-    public static ArrayList<Integer> getPlacements(Team teams[]) {
+    public static ArrayList<Integer> getPlacements() {
         Scanner input = new Scanner(System.in);
         ArrayList<Integer> placements = new ArrayList<>();
-        ArrayList<Integer> bibNumbers = new ArrayList<>();
+        ArrayList<Integer> validBibNumbers = new ArrayList<>();
 
         for (Team team : teams) {
-            bibNumbers.addAll(team.getAllBibNumbers());
+            validBibNumbers.addAll(team.getAllBibNumbers());
         }
 
         clearTerminal();
@@ -40,9 +41,7 @@ public class Race {
                 String userIn = input.nextLine();
                 int bibNumber;
 
-                if (userIn.equals("exit")) {
-                    break;
-                }
+                if (userIn.equals("exit")) {break;}
 
                 try {
                     bibNumber = Integer.parseInt(userIn);
@@ -56,14 +55,14 @@ public class Race {
                     System.out.println("That runner has already finished");
                     i--;
                     continue;
-                } else if (!bibNumbers.contains(bibNumber)) {
+                } else if (!validBibNumbers.contains(bibNumber)) {
                     System.out.println("That bib# is not a valid entry.");
-                    System.out.println("Valid entries are: " + bibNumbers);
+                    System.out.println("Valid entries are: " + validBibNumbers);
                     i--;
                     continue;
                 }
                 placements.add(bibNumber);
-                bibNumbers.remove(bibNumbers.indexOf(bibNumber)); 
+                validBibNumbers.remove(validBibNumbers.indexOf(bibNumber)); 
             }
             return placements;
 
@@ -73,7 +72,7 @@ public class Race {
         }
     }
 
-    public static void calculateTeamPoints(ArrayList<Integer> placements, Team[] teams) {
+    public static void placeTeams(ArrayList<Integer> placements) {
         clearTerminal();
         for (Team team : teams) {
             for (int place = 1; place <= placements.size(); place++) {
