@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
@@ -41,11 +45,6 @@ public class Race {
      */
     public static void main(String[] args) {
         createTeams();
-        
-        for (Team team : allTeams) {
-            allRacers.addAll(team.getRunners());
-        }
-
 
         ArrayList<Integer> placements = getPlacements();
         placeTeams(placements);
@@ -63,9 +62,14 @@ public class Race {
 
         // Print the top 5 athletes of the race
         System.out.println("The top 5 athletes today were: ");
+
+        
         for (int i = 0; i < 5; i++) {
             Runner runner = allRacers.get(i);
-            System.out.println(runner);
+            if (runner.isFinished()) {
+                System.out.println(runner);
+            }
+            // System.out.println(runner);
         }
 
         // Print the top 3 teams and their scores
@@ -175,22 +179,43 @@ public class Race {
      * Changes for every race
      */
     public static void createTeams() {
-        String[] initials = {"AB", "CD", "EF", "GH", "IJ", "KL",
-                             "MN", "OP", "QR", "ST", "UV", "WX"};
+        String teamInfo = "Teams.txt";
         
-        Team CA = new Team("CA", 1);
-        Team DA = new Team("DA", 2);
+        try (BufferedReader br = new BufferedReader(new FileReader(teamInfo))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parameters = line.split(",\\s");
 
-        for (int i = 0; i < initials.length / 2; i++) {
-            CA.addRunner(new Runner(initials[i], CA.getName(), 1000 + i));
+                allTeams.add(new Team(parameters[0], Integer.parseInt(parameters[1])));
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + teamInfo);
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file: " + teamInfo);
         }
+        
+        String runnerInfo = "Runners.txt";
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(runnerInfo))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parameters = line.split(",\\s");
 
-        for (int i = initials.length / 2; i < initials.length; i++) {
-            DA.addRunner(new Runner(initials[i], DA.getName(), 2000 + i));
+                Runner currentRunner = new Runner(parameters[0], parameters[1], Integer.parseInt(parameters[2]));
+
+                allRacers.add(currentRunner);
+
+                for (Team team : allTeams) {
+                    if (team.getName().equals(parameters[1])) {
+                        team.addRunner(currentRunner);
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + runnerInfo);
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file: " + runnerInfo);
         }
-
-        allTeams.add(CA);
-        allTeams.add(DA);
     }
 
     /**
