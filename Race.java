@@ -46,7 +46,7 @@ public class Race {
     public static void main(String[] args) {
         createTeams();
 
-        ArrayList<Integer> placements = getPlacements();
+        ArrayList<Integer> placements = getPlacementsFromUser();
         placeTeams(placements);
         announceWinners();
 
@@ -97,7 +97,7 @@ public class Race {
      * 
      * @return placements an ArrayList collecting bibNumbers in order of race completion
      */
-    public static ArrayList<Integer> getPlacements() {
+    public static ArrayList<Integer> getPlacementsFromUser() {
         Scanner input = new Scanner(System.in);
         ArrayList<Integer> placements = new ArrayList<>();
         ArrayList<Integer> validBibNumbers = new ArrayList<>();

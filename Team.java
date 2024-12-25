@@ -34,7 +34,6 @@ public class Team {
      */
     private final ArrayList<Runner> runners = new ArrayList<>();
 
-
     /**
      * Constructor for the Team class
      * @param name Team name
