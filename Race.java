@@ -1,12 +1,44 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Scanner;
 
+/**
+ * 
+ * These Java programs manage a cross-country race involving
+ * teams and individual runners. In cross-country races, team scoring is 
+ * determined by summing the finishing positions of the top five runners 
+ * from each team. The team with the lowest total score wins. If a team does
+ * not have five runners finish, it is disqualified from scoring. The Runner 
+ * class represents individual racers. The Team class represents teams and
+ * tracks points based on the placements of their top five runners. The 
+ * Race class serves as the controller, creating teams, collecting race 
+ * results through user input, and calculating and displaying placements. 
+ * To use the program, run the Race class, follow prompts to input runners’ 
+ * bib numbers as they finish, and type “exit” if runners do not finish. 
+ * Results are dynamically calculated and sorted, highlighting the top five 
+ * runners and top three teams. The program is customizable through the 
+ * createTeams method, allowing adjustments to the number of teams and runners. 
+ * This program ensures valid input, prevents duplicate placements, and 
+ * clearly summarizes the race results.
+ * 
+ */
 public class Race {
-    public static ArrayList<Runner> allRacers = new ArrayList<>();
+
+    /**
+     * ArrayLists to store all the teams
+     */
     public static ArrayList<Team> allTeams = new ArrayList<>();
 
+    /**
+     * ArrayLists to store all the runners
+     */
+    public static ArrayList<Runner> allRacers = new ArrayList<>();
+
+    /**
+     * Main method to manage the cross-country race
+     * 
+     * @param args Command-line arguments
+     */
     public static void main(String[] args) {
         createTeams();
         
@@ -14,32 +46,53 @@ public class Race {
             allRacers.addAll(team.getRunners());
         }
 
-        
 
         ArrayList<Integer> placements = getPlacements();
         placeTeams(placements);
-        anounceWinners();
+        announceWinners();
 
         
     }
 
-    public static void anounceWinners() {
+    /**
+     * Anounces the winners of the race
+     * The top 5 athletes and the top 3 teams get printed
+     */
+    public static void announceWinners() {
         clearTerminal();
+
+        // Print the top 5 athletes of the race
         System.out.println("The top 5 athletes today were: ");
         for (int i = 0; i < 5; i++) {
             Runner runner = allRacers.get(i);
-            System.out.println((i + 1) + ". " + runner.getName() + " from " + runner.getTeamName());
+            System.out.println(runner);
         }
 
-        System.out.println("\nThe top 3 teams today were: ");
-        int i = 0;
+        // Print the top 3 teams and their scores
+        System.out.println("\nThe top team(s) today were: ");
+        int i = 1;
         for (Team team : allTeams) {
-            System.out.println((i + 1) + ". " + team);
-            i++;
-            if (i == 3) {break;}
+            if (team.canScore()) {
+                System.out.println(i + ". " + team);
+                i++;
+                if (i == 3) {break;}
+            }
+        }
+
+        // Print the teams that can't score
+        System.out.println("\nThe following teams couldn't score: ");
+        for (Team team : allTeams) {
+            if (!team.canScore()) {
+                System.out.println(team);
+            }
         }
     }
 
+    /**
+     * Gets Bib Number order from the user and makes sure the input is valid
+     * 
+     * @return placements an ArrayList collecting bibNumbers in order of race completion
+     */
     public static ArrayList<Integer> getPlacements() {
         Scanner input = new Scanner(System.in);
         ArrayList<Integer> placements = new ArrayList<>();
@@ -53,8 +106,13 @@ public class Race {
 
         try {
             for (int i = 0; i < allRacers.size(); i++) {
+                System.out.println("Type 'exit' if the remaining runners did not finish");
+                System.out.println("Valid entries are: " + validBibNumbers);
                 System.out.print("Who came in " + (i + 1) + " place? (Bib Number) ");
                 String userIn = input.nextLine();
+                
+                clearTerminal();
+                
                 int bibNumber;
 
                 if (userIn.equals("exit")) {break;}
@@ -73,7 +131,6 @@ public class Race {
                     continue;
                 } else if (!validBibNumbers.contains(bibNumber)) {
                     System.out.println("That bib# is not a valid entry.");
-                    System.out.println("Valid entries are: " + validBibNumbers);
                     i--;
                     continue;
                 }
@@ -89,6 +146,13 @@ public class Race {
         }
     }
 
+    /**
+     * Scores the runners for the teams
+     * Organizes the teams by points in allTeams ArrayList
+     * Oganiizes the runners by placement in allRacers ArrayList
+     * 
+     * @param placements an ArrayList of bibNumbers in order of completion
+     */
     public static void placeTeams(ArrayList<Integer> placements) {
         clearTerminal();
         for (Team team : allTeams) {
@@ -99,28 +163,17 @@ public class Race {
                     team.getRunnerByID(bibNumber).finished(place);
                 }
             }
-            System.out.println(team.getName() + " has " + team.getPoints() + " points");
-            // System.out.println(team.getRunners());
         }
 
-        Collections.sort(allTeams, new Comparator<Team>() {
-            @Override
-            public int compare(Team t1, Team t2) {
-                return Integer.compare(t1.getPoints(), t2.getPoints());
-            }
-        });
+        Collections.sort(allTeams, (Team t1, Team t2) -> Integer.compare(t1.getPoints(), t2.getPoints()));
 
-        Collections.sort(allRacers, new Comparator<Runner>() {
-            @Override
-            public int compare(Runner r1, Runner r2) {
-                return Integer.compare(r1.getPlacement(), r2.getPlacement());
-            }
-        });
-
-        // System.out.println(allTeams);
-
+        Collections.sort(allRacers, (Runner r1, Runner r2) -> Integer.compare(r1.getPlacement(), r2.getPlacement()));
     }
     
+    /**
+     * Adjustable method to create teams and runners
+     * Changes for every race
+     */
     public static void createTeams() {
         String[] initials = {"AB", "CD", "EF", "GH", "IJ", "KL",
                              "MN", "OP", "QR", "ST", "UV", "WX"};
@@ -129,17 +182,20 @@ public class Race {
         Team DA = new Team("DA", 2);
 
         for (int i = 0; i < initials.length / 2; i++) {
-            CA.addRunner(new Runner(initials[i], "Cary Academy", 1000 + i));
+            CA.addRunner(new Runner(initials[i], CA.getName(), 1000 + i));
         }
 
         for (int i = initials.length / 2; i < initials.length; i++) {
-            DA.addRunner(new Runner(initials[i], "Durham Academy", 2000 + i));
+            DA.addRunner(new Runner(initials[i], DA.getName(), 2000 + i));
         }
 
         allTeams.add(CA);
         allTeams.add(DA);
     }
 
+    /**
+     * Housekeeping method to clear the terminal
+     */
     public static void clearTerminal() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
