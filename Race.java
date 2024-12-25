@@ -62,7 +62,7 @@ public class Race {
 
         // Print the top 5 athletes of the race
         System.out.println("The top 5 athletes today were: ");
-        int j = 0;
+        int j = 1;
         for (Runner runner : allRacers) {
             if (runner.isFinished()) {
                 System.out.println(runner);
