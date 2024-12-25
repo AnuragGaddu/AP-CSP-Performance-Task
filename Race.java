@@ -62,14 +62,13 @@ public class Race {
 
         // Print the top 5 athletes of the race
         System.out.println("The top 5 athletes today were: ");
-
-        
-        for (int i = 0; i < 5; i++) {
-            Runner runner = allRacers.get(i);
+        int j = 0;
+        for (Runner runner : allRacers) {
             if (runner.isFinished()) {
                 System.out.println(runner);
             }
-            // System.out.println(runner);
+            if (j == 5) {break;}
+            j++;
         }
 
         // Print the top 3 teams and their scores
@@ -78,8 +77,9 @@ public class Race {
         for (Team team : allTeams) {
             if (team.canScore()) {
                 System.out.println(i + ". " + team);
-                i++;
                 if (i == 3) {break;}
+                i++;
+                
             }
         }
 
